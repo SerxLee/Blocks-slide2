@@ -9,13 +9,18 @@
 import UIKit
 import CoreData
 
+public var appdelegageArray: NSArray = []
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     //initialize the Core Data stack object as a lazy variable.
     lazy var coreDataStack = CoreDataStack()
-
+    lazy var storeLastTime = storeTheLastTime()
+    
     var window: UIWindow?
+    
+    
     
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -52,7 +57,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
         
+        storeLastTime.toWriteArray = NSMutableArray(array: appdelegageArray)
+        
+        storeLastTime.startToWrite()
+        
         coreDataStack.saveContent()
+        
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 

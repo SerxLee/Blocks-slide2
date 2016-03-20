@@ -16,10 +16,19 @@ import Foundation
 import CoreData
 
 
+
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
-    
+        
     //how many blocks the blocks slide onece, 2 or 3...
     let numberBlocksSlideOnce: Int = 2
+    
+    var stateArray: [Int] =
+        [0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0,0,0,0,0,0]
     
     let game11: [Int] =
        [0,0,1,1,0,0,
@@ -53,7 +62,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         game.append(game13)
     }
     
+    
+    
     var level: Int!
+    var isContinue: Int!
     
     var BlocksPositionXY: [CGPoint] = []
     
@@ -79,8 +91,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var swipeLeft = UISwipeGestureRecognizer()
     
     //tap gesture
-    var tapSingleFinger = UITapGestureRecognizer()
-    var tapDoubleFinger = UITapGestureRecognizer()
+    var tapSingleFingerOneClick = UITapGestureRecognizer()
+    var tapSingleFingerDoubleClick = UITapGestureRecognizer()
     
     //the move Event use
     var FSTBlocks: [(Int, Int)] = [(-1, -1),(-1, -1),(-1, -1)]
@@ -119,6 +131,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    func getDataFromPlist(){
+        let storege = storeTheLastTime()
+        storege.startToRead()
+        stateArray = storege.toReadArray as! [Int]
+        print(stateArray)
+    }
+    
     func allBlocksPoint(){
         
         for index_j in 0...6{
@@ -130,29 +149,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //set the location, if there is a block, the doubleArrayBoolBlocks's value if ture.
     func isThereA_Block(){
-        
-        let levelComplex = level / 10
-        let choose = level % 10
         var x = 0
         var y = 0
-        if levelComplex == 1{
-            let gg = game[choose - 1]
-            for i in 0...gg.count - 1{
-                if gg[i] == 1{
-                    y = i / 6
-                    x = i % 6
-                    
-                    doubleArrayBoolBlocks[x, y] = true
-                }
+        var gg:[Int]!
+        if (isContinue == 1){
+            gg = stateArray
+        }else if isContinue == 2{
+            gg = game[level]
+        }
+        for i in 0...gg.count - 1{
+            if gg[i] == 1{
+                y = i / 6
+                x = i % 6
+                
+                doubleArrayBoolBlocks[x, y] = true
             }
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(isContinue)
         
-        NSLog("\(level)")
         
+        getDataFromPlist()
+
         //Obtain the device's screen size, and Set the blocks's side
         getDevicesSize()
         add()
@@ -166,6 +187,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
         //call the method: set gesture recognizer attribute
         setGestureAttribute()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        print("aa \(isContinue)")
     }
     
     //a method of get the device size
@@ -268,11 +294,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     //TODO: gesture recognizer's attribute
     func setGestureAttribute(){
         
-        tapSingleFinger.numberOfTouchesRequired = 1
-        tapSingleFinger.numberOfTapsRequired = 1
-        tapSingleFinger.delegate = self
-        tapSingleFinger = UITapGestureRecognizer(target: self, action: Selector("handleSingleFingerEvent:"))
-        self.grayView.addGestureRecognizer(tapSingleFinger)
+        tapSingleFingerOneClick.numberOfTouchesRequired = 1
+        tapSingleFingerOneClick.numberOfTapsRequired = 1
+        tapSingleFingerOneClick.delegate = self
+        tapSingleFingerOneClick = UITapGestureRecognizer(target: self, action: Selector("handleSingleFingerEvent:"))
+        self.grayView.addGestureRecognizer(tapSingleFingerOneClick)
         
         swipeUp.numberOfTouchesRequired = 1
         swipeDown.numberOfTouchesRequired = 1
@@ -345,6 +371,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         var allowMove = false
         var changeLenght: CGFloat = blockLenght
         
+        /*
+            if this time is the selected blocks first time to move,
+            get the blocks position from the BlocksPositionXY
+        
+            else get the blocks position from the Nums
+        */
         if firstTimeToMove{
             FSTBlocks[0].0 = Int(BlocksPositionXY[0].x)
             FSTBlocks[0].1 = Int(BlocksPositionXY[0].y)
@@ -389,11 +421,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             allowMove = panIsAllowMove(direction)
         }
         if allowMove{
+            //save the next state to the Nums
             Nums[0].0 = FSTBlocks[0].0 + numAdd[direction].0
             Nums[0].1 = FSTBlocks[0].1 + numAdd[direction].1
             Nums[1].0 = FSTBlocks[1].0 + numAdd[direction].0
             Nums[1].1 = FSTBlocks[1].1 + numAdd[direction].1
             
+            //update the posistion of the selected blocks
             BlocksPositionXY[0] = CGPoint(x: Nums[0].0, y: Nums[0].1)
             BlocksPositionXY[1] = CGPoint(x: Nums[1].0, y: Nums[1].1)
             
@@ -454,6 +488,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         }else{
             handleTwoBlockMoveEvent(4)
         }
+        stateArray =
+        [0,0,0,0,0,0,
+            0,0,0,0,0,0,
+            0,0,0,0,0,0,
+            0,0,0,0,0,0,
+            0,0,0,0,0,0,
+            0,0,0,0,0,0]
+        
+        getCorrentState()
     }
     
     func findThePositionInt(positionRAW: CGPoint) -> Bool{
@@ -468,12 +511,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     if positionRAW.x >= contrastStart.x && positionRAW.x <= contrastEnd.x && positionRAW.y >= contrastStart.y && positionRAW.y <= contrastEnd.y{
                         
                         //indicate the block is selected
+                        
                         doubleArrayChooseBlocks[index_i, index_j] = true
                         
                         BlocksPositionXY.append(CGPoint(x: index_i, y: index_j))
                         return true
+
                     }
                 }
+                
+                else if doubleArrayBoolBlocks[index_i, index_j] && !doubleArrayChooseBlocks[index_i, index_j]{
+                    return false
+                }
+
+                //////////
+                
             }
         }
         return false
@@ -507,6 +559,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     if showShadow{
                         subview.frame.origin.x = subview.frame.origin.x - 2.0
                         subview.frame.origin.y = subview.frame.origin.y + 4.0
+                        subview.frame.size.height = subview.frame.size.height + 0.5
+                        subview.frame.size.width = subview.frame.size.width + 0.5
                         
                         subview.layer.masksToBounds = !showShadow
                         let shadowPath = UIBezierPath(rect: subview.layer.bounds)
@@ -518,6 +572,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     }else{
                         subview.frame.origin.x = subview.frame.origin.x + 2.0
                         subview.frame.origin.y = subview.frame.origin.y - 4.0
+                        subview.frame.size.height = subview.frame.size.height - 0.5
+                        subview.frame.size.width = subview.frame.size.width - 0.5
                         
                         subview.layer.masksToBounds = !showShadow
 
@@ -560,6 +616,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     if findThePositionInt(limPosition){
                         flagSecond = true
                         handleSeletedBlocks(2, showShadow: true)
+                    }else{
+                        flagFirst = false
+                        handleSeletedBlocks(1, showShadow: false)
+                        doubleArrayChooseBlocks[Int(BlocksPositionXY[0].x), Int(BlocksPositionXY[0].y)] = false
+
+                        BlocksPositionXY = []
+
                     }
                 }
                 if flagFirst && flagSecond {
@@ -606,6 +669,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             }
             BlocksPositionXY = []
         }
+    }
+    
+    func getCorrentState(){
+        
+        for index_i in 0...5{
+            for index_j in 0...5{
+                if checkTheBackground(index_i, yy: index_j){
+                    stateArray[index_j * 6 + index_i] = 1
+                }
+            }
+        }
+        appdelegageArray = NSArray(array: stateArray)
+//        print(appdelegageArray)
     }
     
     override func didReceiveMemoryWarning() {

@@ -14,6 +14,8 @@
 		9B73F6801C9956E4001721B7 /* Mark.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9B73F67E1C9956E4001721B7 /* Mark.xcdatamodeld */; };
 		9B73F6951C996320001721B7 /* Mark+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B73F6931C996320001721B7 /* Mark+CoreDataProperties.swift */; };
 		9B73F6961C996320001721B7 /* Mark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B73F6941C996320001721B7 /* Mark.swift */; };
+		9BE2C8861C9BA04F001D4490 /* notDoneGame.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9BE2C8851C9BA04F001D4490 /* notDoneGame.plist */; };
+		9BE2C8881C9BA125001D4490 /* storeTheLastTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE2C8871C9BA125001D4490 /* storeTheLastTime.swift */; };
 		9BFBC8321C900BB600723611 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFBC8311C900BB600723611 /* AppDelegate.swift */; };
 		9BFBC8341C900BB600723611 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFBC8331C900BB600723611 /* ViewController.swift */; };
 		9BFBC8371C900BB600723611 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BFBC8351C900BB600723611 /* Main.storyboard */; };
@@ -50,6 +52,8 @@
 		9B73F67F1C9956E4001721B7 /* Mark.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Mark.xcdatamodel; sourceTree = "<group>"; };
 		9B73F6931C996320001721B7 /* Mark+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Mark+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9B73F6941C996320001721B7 /* Mark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mark.swift; sourceTree = "<group>"; };
+		9BE2C8851C9BA04F001D4490 /* notDoneGame.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = notDoneGame.plist; sourceTree = "<group>"; };
+		9BE2C8871C9BA125001D4490 /* storeTheLastTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = storeTheLastTime.swift; sourceTree = "<group>"; };
 		9BFBC82E1C900BB600723611 /* Blocks-slide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blocks-slide.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BFBC8311C900BB600723611 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9BFBC8331C900BB600723611 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -121,6 +125,8 @@
 				9B73F6941C996320001721B7 /* Mark.swift */,
 				9B73F63F1C98CFFE001721B7 /* CoreDataStack.swift */,
 				9B73F67E1C9956E4001721B7 /* Mark.xcdatamodeld */,
+				9BE2C8851C9BA04F001D4490 /* notDoneGame.plist */,
+				9BE2C8871C9BA125001D4490 /* storeTheLastTime.swift */,
 			);
 			name = data;
 			sourceTree = "<group>";
@@ -291,6 +297,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BE2C8861C9BA04F001D4490 /* notDoneGame.plist in Resources */,
 				9BFBC83C1C900BB600723611 /* LaunchScreen.storyboard in Resources */,
 				9BFBC8391C900BB600723611 /* Assets.xcassets in Resources */,
 				9BFBC8371C900BB600723611 /* Main.storyboard in Resources */,
@@ -320,6 +327,7 @@
 			files = (
 				9B73F6401C98CFFE001721B7 /* CoreDataStack.swift in Sources */,
 				9B73F6351C97D55C001721B7 /* chooseLevelTableViewController.swift in Sources */,
+				9BE2C8881C9BA125001D4490 /* storeTheLastTime.swift in Sources */,
 				9BFBC8601C919B7600723611 /* DoubleDimensionalArray.swift in Sources */,
 				9BFBC8341C900BB600723611 /* ViewController.swift in Sources */,
 				9B73F6801C9956E4001721B7 /* Mark.xcdatamodeld in Sources */,

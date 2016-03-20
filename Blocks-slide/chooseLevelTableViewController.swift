@@ -36,8 +36,8 @@ class chooseLevelTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        let sen = (indexPath.section + 1) * 10 + indexPath.row + 1
-        performSegueWithIdentifier("levelToGame", sender: sen)
+//        let sen = (indexPath.section + 1) * 10 + indexPath.row + 1
+        performSegueWithIdentifier("levelToGame", sender: indexPath.row)
     }
 
     
@@ -49,6 +49,7 @@ class chooseLevelTableViewController: UITableViewController {
             let nextController = controllerview.topViewController as! ViewController
             
             nextController.level = sender as! Int
+            nextController.isContinue = 2
             nextController.managedContext = managerContext
             NSLog("segue")
         }
