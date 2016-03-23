@@ -112,3 +112,30 @@ struct DoubleDimensionalArrayPoint{
         }
     }
 }
+
+struct doubleDimensionalArrayTuples {
+    
+    let rows: Int
+    let columns:Int
+    
+    var grid:[(Int, Int)]
+    
+    init(rows: Int, columns: Int){
+        
+        self.rows = rows
+        self.columns = columns
+        
+        grid = Array(count: rows * columns, repeatedValue: (0, 0))
+    }
+    
+    subscript(row: Int, col: Int) -> (Int, Int){
+        
+        get{
+            return grid[(row * columns) + col]
+        }
+        set{
+            grid[(row * columns) + col] = newValue
+        }
+    }
+
+}

@@ -84,11 +84,10 @@ class MenuController: UIViewController {
         
         let result = store.toReadArray
         
-        print(result.count)
-        if result.count == 0{
-            return false
-        }else{
+        if (result != nil) && result.count != 0{
             return true
+        }else{
+            return false
         }
     }
 }

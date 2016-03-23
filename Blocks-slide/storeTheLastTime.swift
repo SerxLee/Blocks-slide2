@@ -31,6 +31,7 @@ class storeTheLastTime {
         let filePath = docPath.stringByAppendingPathComponent("notDoneGame.plist")
         toReadArray = NSArray(contentsOfFile: filePath)
         
+        
 //                print(toReadArray)
     }
 }

@@ -21,6 +21,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         
     //how many blocks the blocks slide onece, 2 or 3...
     let numberBlocksSlideOnce: Int = 2
+
     
     var stateArray: [Int] =
         [0,0,0,0,0,0,
@@ -30,49 +31,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         0,0,0,0,0,0,
         0,0,0,0,0,0]
     
-    let game11: [Int] =
-       [0,0,1,1,0,0,
-        0,1,0,0,1,0,
-        1,0,0,0,0,1,
-        1,0,0,0,0,1,
-        0,1,0,0,1,0,
-        0,0,1,1,0,0]
-    
-    let game12: [Int] =
-       [0,0,0,0,0,0,
-        0,1,1,1,1,0,
-        1,0,0,0,0,1,
-        1,0,0,0,0,1,
-        0,1,1,1,1,0,
-        0,0,0,0,0,0]
-    
-    let game13: [Int] =
-       [0,0,0,0,0,1,
-        1,1,1,1,1,1,
-        1,0,0,0,0,0,
-        1,0,0,0,0,0,
-        1,0,0,0,1,0,
-        1,0,0,0,0,0]
-    
-    var game: [[Int]] = []
-    
-    func add(){
-        game.append(game11)
-        game.append(game12)
-        game.append(game13)
-    }
-    
-    
     
     var level: Int!
     var isContinue: Int!
     
     var BlocksPositionXY: [CGPoint] = []
     
-    var doubleArrayNumberBlcoks = DoubleDimensionalArrayInt(rows: 100, columns: 100)
-    var doubleArrayBoolBlocks = DoubleDimensionalArrayBool(rows: 100, columns: 100)
-    var doubleArrayPointBlocks = DoubleDimensionalArrayPoint(rows: 100, columns: 100)
-    var doubleArrayChooseBlocks = DoubleDimensionalArrayBool(rows: 100, columns: 100)
+    var doubleArrayNumberBlcoks = DoubleDimensionalArrayInt(rows: 10, columns: 10)
+    var doubleArrayBoolBlocks = DoubleDimensionalArrayBool(rows: 10, columns: 10)
+    
+    var doubleArrayBoolImage = DoubleDimensionalArrayInt(rows: 10, columns: 10)
+    
+    var doubleArrayPointBlocks = DoubleDimensionalArrayPoint(rows: 10, columns: 10)
+    var doubleArrayChooseBlocks = DoubleDimensionalArrayBool(rows: 10, columns: 10)
     
     //the second view size
     var grayView: UIView!
@@ -110,6 +81,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var resultOfMark: NSDictionary!
 
     var markOfNow: Int = 0
+    
+    
+    /*
+
+        add UIImage
+
+    */
+    let rawImage = UIImage(named: "test")
+    
+    
     
     //the method is link the database and get the data.
     func coreDataInit(){
@@ -151,52 +132,73 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     func isThereA_Block(){
         var x = 0
         var y = 0
-        var gg:[Int]!
+        var gg: [Int] = []
         if (isContinue == 1){
+            getDataFromPlist()
             gg = stateArray
-        }else if isContinue == 2{
-            gg = game[level]
-        }
-        for i in 0...gg.count - 1{
-            if gg[i] == 1{
-                y = i / 6
-                x = i % 6
-                
-                doubleArrayBoolBlocks[x, y] = true
+            
+            for i in 0...gg.count - 1{
+                if gg[i] >= 1{
+                    
+                    let lim = gg[i] - 1
+                    
+                    y = i / 6
+                    x = i % 6
+                    
+                    //game load
+                    doubleArrayBoolImage[x, y] = lim
+                    doubleArrayBoolBlocks[x, y] = true
+                }
             }
+
+        }else if isContinue == 2{
+            
+            let random = RandomBlocksArray()
+            gg = random.startRandom(16)
+            
+            for i in 0...gg.count - 1{
+                if gg[i] == 1{
+                    y = i / 6
+                    x = i % 6
+                    
+                    //game load
+                    doubleArrayBoolBlocks[x, y] = true
+                }
+            }
+
         }
+        createBlocksToMove()
+
+            stateArray =
+            [0,0,0,0,0,0,
+                0,0,0,0,0,0,
+                0,0,0,0,0,0,
+                0,0,0,0,0,0,
+                0,0,0,0,0,0,
+                0,0,0,0,0,0]
+        getCorrentState()
+        
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        print(isContinue)
-        
-        
-        getDataFromPlist()
-
-        //Obtain the device's screen size, and Set the blocks's side
+        super.viewDidLoad()        
         getDevicesSize()
-        add()
+        //Obtain the device's screen size, and Set the blocks's side
         
         allBlocksPoint()
         
         isThereA_Block()
         
         //create the blocks and drap them in the grayview
-        createBlocksToMove(1)
+//        createBlocksToMove()
 
         //call the method: set gesture recognizer attribute
         setGestureAttribute()
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        print("aa \(isContinue)")
-    }
-    
     //a method of get the device size
     func getDevicesSize(){
-        
+    
         let calculateBound: CGFloat = 0.058
         
         let masterX: CGFloat = getTrueLength(true)
@@ -214,7 +216,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
         let pointOfBackground = CGPoint(x: boundWide / 2 - 4, y: masterY - grayViewHeight - masterY / 6 - 4)
         let sizeOfBackground = CGSize(width: grayViewLenght + 8, height: grayViewHeight + 8)
-        
+    
         //MARK:grayview handing all the blocks
         grayView = UIView(frame: CGRect(origin: pointOfBackground, size: sizeOfBackground))
         grayView.backgroundColor = UIColor.whiteColor()
@@ -223,26 +225,57 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         grayView.layer.cornerRadius = 3.0
         view.addSubview(grayView)
         
-        print(masterX)
-        print(masterY)
-        print(blockLenght)
+//        print(masterX)
+//        print(masterY)
+//        print(blockLenght)
     }
     
-    func createBlocksToMove(num: Int){
+    let numberOfImage: Int  = 16
+
+    func createBlocksToMove(){
+
+        let image = HandleImage()
+        image.getBlockLengh = blockLenght
+        
         var numOfBlocks: Int = 0
-        for index_i in 0...5{
-            for index_j in 0...5{
+        
+        var numOfPingTu = 0
+        let random = RandomBlocksArray().randomAllBlocks(numberOfImage)
+        
+        
+        
+        for index_j in 0...5{
+            for index_i in 0...5{
                 
                 //if the position of the matrix has a block, create a blocks in the position
-                if doubleArrayBoolBlocks[index_i, index_j]{
-
-//                    let view2 = UIView(frame: CGRect(origin: doubleArrayPointBlocks[index_i, index_j], size: sizeOfBlocks))
-                    let view2 = UIView(frame: CGRect(x: doubleArrayPointBlocks[index_i, index_j].x + 4, y: doubleArrayPointBlocks[index_i, index_j].y + 4, width: sizeOfBlocks.width, height: sizeOfBlocks.height))
-                    view2.backgroundColor = UIColor.grayColor()
+                if checkTheBackground(index_i, yy: index_j){
+                    
+                    let view2 = UIImageView(frame: CGRect(x: doubleArrayPointBlocks[index_i, index_j].x + 4, y: doubleArrayPointBlocks[index_i, index_j].y + 4, width: sizeOfBlocks.width, height: sizeOfBlocks.height))
+                    
+                    if numOfPingTu < numberOfImage{
+                        
+                        var lim_index: Int!
+                        
+                        if isContinue == 1{
+                            
+                            lim_index = doubleArrayBoolImage[index_i, index_j]
+                        }else if isContinue == 2{
+                            
+                            lim_index = random()
+                            doubleArrayBoolImage[index_i, index_j] = lim_index
+//                            print(doubleArrayBoolImage[index_i, index_j])
+                        }
+                        
+                        image.number = (numberOfImage, lim_index)
+                        view2.image = image.smallImage()
+                        numOfPingTu++
+                    }else{
+                        view2.backgroundColor = UIColor.grayColor()
+                    }
                     
                     //set corner radius
                     view2.layer.masksToBounds = true
-                    view2.layer.cornerRadius = 5.0
+                    view2.layer.cornerRadius = 3.0
                     
                     view2.layer.borderWidth = 0.5
                     view2.layer.borderColor = UIColor.blackColor().CGColor
@@ -251,8 +284,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     view2.tag = numOfBlocks + 1
                     
                     doubleArrayNumberBlcoks[index_i, index_j] = numOfBlocks + 1
-                        
                     grayView.addSubview(view2)
+                    
                     numOfBlocks++
                 }
             }
@@ -438,6 +471,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayBoolBlocks[FSTBlocks[1].0, FSTBlocks[1].1] = false
                     doubleArrayNumberBlcoks[FSTBlocks[1].0, FSTBlocks[1].1] = 0
                     
+                    //handle the image
+                    doubleArrayBoolImage[Nums[1].0, Nums[1].1] = doubleArrayBoolImage[FSTBlocks[1].0, FSTBlocks[1].1]
+                    doubleArrayBoolImage[FSTBlocks[1].0, FSTBlocks[1].1] = 0
+                    
                     UIView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
                         
                         if direction == 1 || direction == 2{
@@ -458,6 +495,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayBoolBlocks[FSTBlocks[0].0, FSTBlocks[0].1] = false
                     doubleArrayNumberBlcoks[FSTBlocks[0].0, FSTBlocks[0].1] = 0
                     
+                    //handle the image
+                    doubleArrayBoolImage[Nums[0].0, Nums[0].1] = doubleArrayBoolImage[FSTBlocks[0].0, FSTBlocks[0].1]
+                    doubleArrayBoolImage[FSTBlocks[0].0, FSTBlocks[0].1] = 0
+                    
                     UIView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
                         
                         if direction == 1 || direction == 2{
@@ -469,6 +510,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         }, completion: nil)
                     
                     doubleArrayBoolBlocks[Nums[0].0, Nums[0].1] = true
+                    
                     doubleArrayNumberBlcoks[Nums[0].0, Nums[0].1] = subview.tag
                 }
             }
@@ -504,7 +546,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         for index_i in 0...5{
             for index_j in 0...5{
                 
-                if doubleArrayBoolBlocks[index_i, index_j] && !doubleArrayChooseBlocks[index_i, index_j]{
+                if checkTheBackground(index_i, yy: index_j) && !doubleArrayChooseBlocks[index_i, index_j]{
                     
                     let contrastStart = doubleArrayPointBlocks[index_i, index_j]
                     let contrastEnd = doubleArrayPointBlocks[index_i + 1, index_j + 1]
@@ -520,12 +562,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     }
                 }
                 
-                else if doubleArrayBoolBlocks[index_i, index_j] && !doubleArrayChooseBlocks[index_i, index_j]{
+                else if checkTheBackground(index_i, yy: index_j) && !doubleArrayChooseBlocks[index_i, index_j]{
                     return false
                 }
-
-                //////////
-                
             }
         }
         return false
@@ -676,8 +715,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         for index_i in 0...5{
             for index_j in 0...5{
                 if checkTheBackground(index_i, yy: index_j){
-                    stateArray[index_j * 6 + index_i] = 1
+                    stateArray[index_j * 6 + index_i] = (1 + doubleArrayBoolImage[index_i, index_j])
                 }
+//                print(doubleArrayBoolImage[index_i, index_j])
             }
         }
         appdelegageArray = NSArray(array: stateArray)
