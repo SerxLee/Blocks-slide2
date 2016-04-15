@@ -18,10 +18,18 @@ import CoreData
 
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
-        
+    
+    
+    //MARK: - ----all Properties----
+    //MARK: -
+    
     //how many blocks the blocks slide onece, 2 or 3...
+    
+    var allPs: allProperties = allProperties()
+    
     let numberBlocksSlideOnce: Int = 2
-
+    var level: Int!
+    var isContinue: Int!
     
     var stateArray: [Int] =
         [0,0,0,0,0,0,
@@ -29,12 +37,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         0,0,0,0,0,0,
         0,0,0,0,0,0,
         0,0,0,0,0,0,
-        0,0,0,0,0,0]
+        0,0,0,0,0,0,-1]
     
-    
-    var level: Int!
-    var isContinue: Int!
-    
+
     var BlocksPositionXY: [CGPoint] = []
     
     var doubleArrayNumberBlcoks = DoubleDimensionalArrayInt(rows: 10, columns: 10)
@@ -54,7 +59,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var positionOfBlcoks = CGPoint(x: 0.0, y: 0.0)
     var sizeOfBlocks: CGSize!
     var blockLenght: CGFloat!
-    
+
+
     //swipe every direction
     var swipeUp = UISwipeGestureRecognizer()
     var swipeDown = UISwipeGestureRecognizer()
@@ -76,21 +82,44 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var managedContext: NSManagedObjectContext!
     var markEntity: NSEntityDescription!
     var markFetch: NSFetchRequest!
+
     
     //the data get from the coreData, the first of the result dictionatry.
     var resultOfMark: NSDictionary!
+    
+    var flagFirst: Bool = false
+    var flagSecond: Bool = false
+    var flagThird: Bool = false
 
-    var markOfNow: Int = 0
-    
-    
-    /*
+    //mark time
 
-        add UIImage
+    
+    //MARK: - ----Apple Inc. func----
+    //MARK: -
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()        
+        getDevicesSize()
+//        setupTimeLabel()
+        
+        //Obtain the device's screen size, and Set the blocks's side
+        allBlocksPoint()
+        
+        isThereA_Block()
 
-    */
-    let rawImage = UIImage(named: "test")
+        //call the method: set gesture recognizer attribute
+        setGestureAttribute()
+    }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        
+    }
     
+    //MARK: - -----individual func----
+    //MARK: -
     
     //the method is link the database and get the data.
     func coreDataInit(){
@@ -110,6 +139,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             print("Error: \(error) " +
                 "description \(error.localizedDescription)")
         }
+    }
+    
+    func setupTimeLabel() {
+        let timeLabel = UILabel(frame: CGRect(x: 100, y: 100, width: 20, height: 40))
+        timeLabel.text = "00:00"
+        timeLabel.textColor = UIColor.whiteColor()
+        timeLabel.backgroundColor = UIColor.blackColor()
+        timeLabel.textAlignment = NSTextAlignment.Center
+        
+        self.view.addSubview(timeLabel)
     }
     
     func getDataFromPlist(){
@@ -137,20 +176,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             getDataFromPlist()
             gg = stateArray
             
-            for i in 0...gg.count - 1{
+            for i in 0...gg.count - 2{
                 if gg[i] >= 1{
                     
                     let lim = gg[i] - 1
                     
                     y = i / 6
                     x = i % 6
-                    
                     //game load
+                    level = gg.last
                     doubleArrayBoolImage[x, y] = lim
                     doubleArrayBoolBlocks[x, y] = true
                 }
             }
-
+            
         }else if isContinue == 2{
             
             let random = RandomBlocksArray()
@@ -165,36 +204,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayBoolBlocks[x, y] = true
                 }
             }
-
         }
         createBlocksToMove()
-
-            stateArray =
+        
+        stateArray =
             [0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,0,0]
+             0,0,0,0,0,0,
+             0,0,0,0,0,0,
+             0,0,0,0,0,0,
+             0,0,0,0,0,0,
+             0,0,0,0,0,0,-1]
         getCorrentState()
-        
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()        
-        getDevicesSize()
-        //Obtain the device's screen size, and Set the blocks's side
-        
-        allBlocksPoint()
-        
-        isThereA_Block()
-        
-        //create the blocks and drap them in the grayview
-//        createBlocksToMove()
 
-        //call the method: set gesture recognizer attribute
-        setGestureAttribute()
-    }
     
     //a method of get the device size
     func getDevicesSize(){
@@ -224,10 +246,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         grayView.layer.masksToBounds = true
         grayView.layer.cornerRadius = 3.0
         view.addSubview(grayView)
-        
-//        print(masterX)
-//        print(masterY)
-//        print(blockLenght)
+
     }
     
     let numberOfImage: Int  = 16
@@ -235,14 +254,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     func createBlocksToMove(){
 
         let image = HandleImage()
-        image.getBlockLengh = blockLenght
+        image.initTheImage(level)
         
         var numOfBlocks: Int = 0
         
         var numOfPingTu = 0
         let random = RandomBlocksArray().randomAllBlocks(numberOfImage)
-        
-        
         
         for index_j in 0...5{
             for index_i in 0...5{
@@ -330,7 +347,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         tapSingleFingerOneClick.numberOfTouchesRequired = 1
         tapSingleFingerOneClick.numberOfTapsRequired = 1
         tapSingleFingerOneClick.delegate = self
-        tapSingleFingerOneClick = UITapGestureRecognizer(target: self, action: Selector("handleSingleFingerEvent:"))
+        tapSingleFingerOneClick = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleSingleFingerEvent(_:)))
         self.grayView.addGestureRecognizer(tapSingleFingerOneClick)
         
         swipeUp.numberOfTouchesRequired = 1
@@ -338,10 +355,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         swipeLeft.numberOfTouchesRequired = 1
         swipeRight.numberOfTouchesRequired = 1
         
-        swipeUp = UISwipeGestureRecognizer(target: self, action: Selector("swipe:"))
-        swipeDown = UISwipeGestureRecognizer(target: self, action: Selector("swipe:"))
-        swipeLeft = UISwipeGestureRecognizer(target: self, action: Selector("swipe:"))
-        swipeRight = UISwipeGestureRecognizer(target: self, action: Selector("swipe:"))
+        swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.swipe(_:)))
+        swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.swipe(_:)))
+        swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.swipe(_:)))
+        swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.swipe(_:)))
         
         swipeUp.direction = UISwipeGestureRecognizerDirection.Up
         swipeDown.direction = UISwipeGestureRecognizerDirection.Down
@@ -475,7 +492,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayBoolImage[Nums[1].0, Nums[1].1] = doubleArrayBoolImage[FSTBlocks[1].0, FSTBlocks[1].1]
                     doubleArrayBoolImage[FSTBlocks[1].0, FSTBlocks[1].1] = 0
                     
-                    UIView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+                    UIImageView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
                         
                         if direction == 1 || direction == 2{
                             subview.frame.origin.y = subview.frame.origin.y + changeLenght
@@ -499,7 +516,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayBoolImage[Nums[0].0, Nums[0].1] = doubleArrayBoolImage[FSTBlocks[0].0, FSTBlocks[0].1]
                     doubleArrayBoolImage[FSTBlocks[0].0, FSTBlocks[0].1] = 0
                     
-                    UIView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+                    UIImageView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
                         
                         if direction == 1 || direction == 2{
                             subview.frame.origin.y = subview.frame.origin.y + changeLenght
@@ -515,6 +532,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 }
             }
             
+            if checkIfFinishGame(){
+                var alert = UIAlertController()
+                alert = UIAlertController(title: "恭喜你", message: "你已经通过本关", preferredStyle: UIAlertControllerStyle.Alert)
+                
+                let alertOK = UIAlertAction(title: "确定", style: UIAlertActionStyle.Default, handler: nil)
+                
+                alert.addAction(alertOK)
+                alert.actions
+            }
         }
     }
     
@@ -536,7 +562,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             0,0,0,0,0,0,
             0,0,0,0,0,0,
             0,0,0,0,0,0,
-            0,0,0,0,0,0]
+            0,0,0,0,0,0, -1]
         
         getCorrentState()
     }
@@ -591,7 +617,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     showFirst = (true,Int(point.x), Int(point.y), subview)
                 }
                 //animate
-                UIView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+                UIImageView.animateWithDuration(0.1, delay: 0.1, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
                     
                     self.grayView.bringSubviewToFront(subview)
                     
@@ -632,10 +658,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    var flagFirst: Bool = false
-    var flagSecond: Bool = false
-    var flagThird: Bool = false
-    
     func handleSingleFingerEvent(recognizer: UITapGestureRecognizer){
         
         if recognizer.numberOfTapsRequired == 1{
@@ -643,7 +665,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             let number = self.numberBlocksSlideOnce
 
             let limPosition = recognizer.locationInView(self.grayView)
-            //MARK:slide two blocks once
+            
+            //MARK: slide two blocks once
             if number == 2{
                 
                 if !flagFirst{
@@ -678,7 +701,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     }
                 }
                 
-            //MARK:slide three blocks once
+            //FIXME: slide three blocks once
             }else if number == 3{
                 
                 
@@ -710,6 +733,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+
+    //every move the blocks, check the game is finish ?
+    func checkIfFinishGame() -> Bool{
+        
+        for index_i in 1...4{
+            for index_j in 1...4{
+                if !checkTheBackground(index_i, yy: index_j){
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    
     func getCorrentState(){
         
         for index_i in 0...5{
@@ -720,11 +757,27 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 //                print(doubleArrayBoolImage[index_i, index_j])
             }
         }
+        stateArray[36] = level
         appdelegageArray = NSArray(array: stateArray)
 //        print(appdelegageArray)
+    }
+    
+    
+    @IBAction func goToMenu(sender: UIButton) {
+        
+        let store = storeTheLastTime()
+        store.toWriteArray = NSMutableArray(array: appdelegageArray)
+        store.startToWrite()
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
+    
 }

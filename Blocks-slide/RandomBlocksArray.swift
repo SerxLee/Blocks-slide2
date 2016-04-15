@@ -28,8 +28,7 @@ class RandomBlocksArray{
         }
         return randomArray
     }
-    
-    
+
     func randomAllBlocks(numberBlocks: Int) -> () -> Int!{
         
         let aa = createRandomMan(0, end: numberBlocks - 1)

@@ -11,11 +11,9 @@ import UIKit
 
 class HandleImage {
     
-    var doubleArrayPoint = DoubleDimensionalArrayPoint(rows: 4, columns: 4)
+    let gameLevelString: [String] = ["test", "test2", "test3", "test4"]
     
-    var rawImage = UIImage(named: "test")
-    var getBlockLengh: CGFloat = 0.0
-    var getAllLengh: CGFloat = 0.0
+    var rawImage: UIImage!
     
     var point4: [CGPoint] =
         [CGPoint(x: 0.0, y: 0.0), CGPoint(x: 250.0, y: 0.0),
@@ -32,8 +30,13 @@ class HandleImage {
          
     var number: (Int, Int) = (0, 0)
     
+    func initTheImage(level: Int){
+        
+        rawImage = UIImage(named: gameLevelString[level])
+    }
     
     func smallImage() -> UIImage{
+        
         
         if number.0 == 4{
             return (rawImage?.crop(CGRect(origin: point4[number.1], size: CGSize(width: 250.0, height: 250.0))))!
