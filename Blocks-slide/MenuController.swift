@@ -9,6 +9,8 @@
 import UIKit
 import CoreData
 
+
+
 class MenuController: UIViewController {
         
     var managerContext: NSManagedObjectContext!
@@ -25,16 +27,16 @@ class MenuController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    
     override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
         
         if identifier == "continue"{
             if !checkPlist(){
-                let alert = UIAlertView()
-                alert.title = "error"
-                alert.message = "there is no last time state"
-                alert.addButtonWithTitle("OK")
-                alert.show()
+                
+                let alert = UIAlertController(title: "error", message: "there is no last time state", preferredStyle: UIAlertControllerStyle.Alert)
+                let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+                alert.addAction(okAction)
+                
+                self.presentViewController(alert, animated: true, completion: nil)
                 
                 return false
             }

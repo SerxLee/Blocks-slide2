@@ -236,6 +236,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         
         sizeOfBlocks = CGSize(width: blockLenghtShrink, height: blockLenghtShrink)
 
+        
+        
         let pointOfBackground = CGPoint(x: boundWide / 2 - 4, y: masterY - grayViewHeight - masterY / 6 - 4)
         let sizeOfBackground = CGSize(width: grayViewLenght + 8, height: grayViewHeight + 8)
     
@@ -243,7 +245,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         grayView = UIView(frame: CGRect(origin: pointOfBackground, size: sizeOfBackground))
         grayView.backgroundColor = UIColor.whiteColor()
         
-        grayView.layer.masksToBounds = true
+//        grayView.layer.masksToBounds = true
         grayView.layer.cornerRadius = 3.0
         view.addSubview(grayView)
 
@@ -285,17 +287,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         
                         image.number = (numberOfImage, lim_index)
                         view2.image = image.smallImage()
-                        numOfPingTu++
+                        numOfPingTu += 1
                     }else{
                         view2.backgroundColor = UIColor.grayColor()
                     }
                     
                     //set corner radius
                     view2.layer.masksToBounds = true
-                    view2.layer.cornerRadius = 3.0
+//                    view2.layer.cornerRadius = 3.0
+                    view2.backgroundColor = UIColor.clearColor()
+                    view2.kt_addCorner(radius: 3.0)
                     
-                    view2.layer.borderWidth = 0.5
-                    view2.layer.borderColor = UIColor.blackColor().CGColor
+//                    view2.layer.borderWidth = 0.5
+//                    view2.layer.borderColor = UIColor.blackColor().CGColor
                     
                     //set the tag for everyone block
                     view2.tag = numOfBlocks + 1
@@ -303,7 +307,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayNumberBlcoks[index_i, index_j] = numOfBlocks + 1
                     grayView.addSubview(view2)
                     
-                    numOfBlocks++
+                    numOfBlocks += 1
                 }
             }
         }
@@ -640,7 +644,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         subview.frame.size.height = subview.frame.size.height - 0.5
                         subview.frame.size.width = subview.frame.size.width - 0.5
                         
+                        //delect the shadow
+                        subview.layer.shadowOffset = CGSizeMake(0,0)
+                        subview.layer.shadowColor = UIColor.clearColor().CGColor
                         subview.layer.masksToBounds = !showShadow
+                        subview.backgroundColor = UIColor.clearColor()
+
 
                     }
                     
