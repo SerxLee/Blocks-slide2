@@ -16,15 +16,15 @@ import Foundation
 import CoreData
 
 
-
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     
     //MARK: - ----all Properties----
     //MARK: -
     
-    //how many blocks the blocks slide onece, 2 or 3...
     
+    
+    //how many blocks the blocks slide onece, 2 or 3...
     var allPs: allProperties = allProperties()
     
     let numberBlocksSlideOnce: Int = 2
@@ -44,9 +44,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     var doubleArrayNumberBlcoks = DoubleDimensionalArrayInt(rows: 10, columns: 10)
     var doubleArrayBoolBlocks = DoubleDimensionalArrayBool(rows: 10, columns: 10)
-    
     var doubleArrayBoolImage = DoubleDimensionalArrayInt(rows: 10, columns: 10)
-    
     var doubleArrayPointBlocks = DoubleDimensionalArrayPoint(rows: 10, columns: 10)
     var doubleArrayChooseBlocks = DoubleDimensionalArrayBool(rows: 10, columns: 10)
     
@@ -94,22 +92,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     //mark time
 
     
+    
+    
     //MARK: - ----Apple Inc. func----
     //MARK: -
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()        
-        getDevicesSize()
-//        setupTimeLabel()
-        
-        //Obtain the device's screen size, and Set the blocks's side
-        allBlocksPoint()
-        
-        isThereA_Block()
-
-        //call the method: set gesture recognizer attribute
-        setGestureAttribute()
+        UIRoad()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -118,37 +111,38 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    
+    
+    
+    
     //MARK: - -----individual func----
     //MARK: -
     
+    
+    
+    
     //the method is link the database and get the data.
     func coreDataInit(){
-        
         markEntity = NSEntityDescription.entityForName("Mark", inManagedObjectContext: managedContext)
         markFetch = NSFetchRequest(entityName: "Mark")
         do {
-            
-            let result =
-                try managedContext.executeFetchRequest(markFetch) as! [NSDictionary]
-            
+            let result = try managedContext.executeFetchRequest(markFetch) as! [NSDictionary]
             if result.count > 0{
                 resultOfMark = result.first
             }
-            
         }catch let error as NSError{
             print("Error: \(error) " +
                 "description \(error.localizedDescription)")
         }
-    }
-    
-    func setupTimeLabel() {
-        let timeLabel = UILabel(frame: CGRect(x: 100, y: 100, width: 20, height: 40))
-        timeLabel.text = "00:00"
-        timeLabel.textColor = UIColor.whiteColor()
-        timeLabel.backgroundColor = UIColor.blackColor()
-        timeLabel.textAlignment = NSTextAlignment.Center
-        
-        self.view.addSubview(timeLabel)
     }
     
     func getDataFromPlist(){
@@ -159,7 +153,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func allBlocksPoint(){
-        
         for index_j in 0...6{
             for index_i in 0...6{
                 doubleArrayPointBlocks[index_i, index_j] = CGPoint(x: blockLenght * CGFloat(index_i), y: blockLenght * CGFloat(index_j))
@@ -175,7 +168,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         if (isContinue == 1){
             getDataFromPlist()
             gg = stateArray
-            
             for i in 0...gg.count - 2{
                 if gg[i] >= 1{
                     
@@ -189,12 +181,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                     doubleArrayBoolBlocks[x, y] = true
                 }
             }
-            
         }else if isContinue == 2{
-            
             let random = RandomBlocksArray()
             gg = random.startRandom(16)
-            
             for i in 0...gg.count - 1{
                 if gg[i] == 1{
                     y = i / 6
@@ -220,23 +209,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //a method of get the device size
     func getDevicesSize(){
-    
         let calculateBound: CGFloat = 0.058
-        
         let masterX: CGFloat = getTrueLength(true)
         let masterY: CGFloat = getTrueLength(false)
-
         let boundWide = masterX * calculateBound
-        
         grayViewLenght = masterX - boundWide
         grayViewHeight = grayViewLenght
-        
         blockLenght = grayViewLenght / 6
         let blockLenghtShrink = blockLenght - 1.0
         
         sizeOfBlocks = CGSize(width: blockLenghtShrink, height: blockLenghtShrink)
-
-        
         
         let pointOfBackground = CGPoint(x: boundWide / 2 - 4, y: masterY - grayViewHeight - masterY / 6 - 4)
         let sizeOfBackground = CGSize(width: grayViewLenght + 8, height: grayViewHeight + 8)
@@ -245,10 +227,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         grayView = UIView(frame: CGRect(origin: pointOfBackground, size: sizeOfBackground))
         grayView.backgroundColor = UIColor.whiteColor()
         
-//        grayView.layer.masksToBounds = true
         grayView.layer.cornerRadius = 3.0
         view.addSubview(grayView)
-
     }
     
     let numberOfImage: Int  = 16
@@ -668,13 +648,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func handleSingleFingerEvent(recognizer: UITapGestureRecognizer){
-        
         if recognizer.numberOfTapsRequired == 1{
-            
             let number = self.numberBlocksSlideOnce
-
             let limPosition = recognizer.locationInView(self.grayView)
-            
+
             //MARK: slide two blocks once
             if number == 2{
                 
@@ -691,15 +668,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         flagFirst = false
                         handleSeletedBlocks(1, showShadow: false)
                         doubleArrayChooseBlocks[Int(BlocksPositionXY[0].x), Int(BlocksPositionXY[0].y)] = false
-
                         BlocksPositionXY = []
-
                     }
                 }
                 if flagFirst && flagSecond {
                     
                     recognizer.numberOfTapsRequired = 2
-                    
                     swipeUp.enabled = true
                     swipeDown.enabled = true
                     swipeLeft.enabled = true
@@ -713,12 +687,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             //FIXME: slide three blocks once
             }else if number == 3{
                 
-                
             }
         }else if recognizer.numberOfTapsRequired == 2{
             
             firstTimeToMove = true
-            
             recognizer.numberOfTapsRequired = 1
             
             swipeUp.enabled = false
@@ -778,15 +750,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         store.toWriteArray = NSMutableArray(array: appdelegageArray)
         store.startToWrite()
     }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+
+    func UIRoad(){
+        getDevicesSize()
         
+        //Obtain the device's screen size, and Set the blocks's side
+        allBlocksPoint()
         
+        isThereA_Block()
+        
+        //call the method: set gesture recognizer attribute
+        setGestureAttribute()
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-    
     
 }

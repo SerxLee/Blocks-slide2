@@ -19,14 +19,12 @@ enum UIImageContentMode {
 
 
 extension UIImage{
-    func crop(bounds: CGRect) -> UIImage?
-    {
+    func crop(bounds: CGRect) -> UIImage? {
         return UIImage(CGImage: CGImageCreateWithImageInRect(self.CGImage, bounds)!,
             scale: 0.0, orientation: self.imageOrientation)
     }
     
-    func resize(size:CGSize, contentMode: UIImageContentMode = .ScaleToFill) -> UIImage?
-    {
+    func resize(size:CGSize, contentMode: UIImageContentMode = .ScaleToFill) -> UIImage? {
         let horizontalRatio = size.width / self.size.width;
         let verticalRatio = size.height / self.size.height;
         var ratio: CGFloat!
